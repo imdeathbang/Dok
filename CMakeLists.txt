@@ -1,4 +1,5 @@
 ﻿cmake_minimum_required (VERSION 3.10)
+include(FetchContent)
 
 project (dok
 	LANGUAGES C
@@ -23,5 +24,12 @@ if (Vulkan_INCLUDE_DIRS)
 elseif(DEFINED ENV{VULKAN_SDK})
     target_include_directories(dok PUBLIC "$ENV{VULKAN_SDK}/include")
 elseif(TARGET Vulkan-Headers)
-	target_include_directories(dok PUBLIC Vulkan::Headers)
+	target_link_libraries(dok PUBLIC Vulkan::Headers)
+else ()
+	FetchContent_Declare(
+		vulkan-headers
+		GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
+	)
+	FetchContent_MakeAvailable(vulkan-headers)
+	target_link_libraries(dok PUBLIC Vulkan::Headers)
 endif()
